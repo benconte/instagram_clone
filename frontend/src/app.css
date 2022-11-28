@@ -1,0 +1,44 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+    .navitem {
+        @apply h-[50px] px-[12px] rounded-full my-4 text-[rgba(38,38,38,.8)] cursor-pointer hover:bg-[rgb(250,250,250)] hover:text-[rgb(38,38,38)] flex items-center  justify-center lg:justify-start gap-4;
+    }
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    outline: none;
+}
+
+.instagram-story {
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 33% 100%, #fed373 4%, #f15245 30%, #d92e7f 62%, #9b36b7 85%, #515ecf)
+}
+
+/* styling the story swiper prev/next icons */
+.mySwiper .swiper-button-prev, .mySwiper .swiper-button-next{
+    top: 57%;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    color: #BDBDBD;
+    border: 1px solid #DBDBDB;
+    background: #fff;
+}
+
+.mySwiper .swiper-button-prev:after, .mySwiper .swiper-button-next:after {
+    font-size: 10px;
+}
+
+.profile-image {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+}
