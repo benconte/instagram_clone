@@ -1,12 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    {% load static %}
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Login - Instragram</title>
-</head>
-<body>
-    <div>Login</div>
-</body>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lobster&family=Satisfy&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/static/css/style.css" />
+    <link rel="stylesheet" href="/static/css/login.css" />
+  </head>
+  <body>
+    <main>
+      <div class="content">
+        <div class="form-section">
+          <div class="form">
+            <div class="form-header">
+              <header>Instagram</header>
+              <br /><br />
+            </div>
+            <div class="form-content">
+              <form method="POST" class="form-group" autocomplete="off">
+                {% csrf_token %}
+
+                <input type="text" placeholder="Username" name="username" require />
+                <input type="password" placeholder="password" name="password" required />
+
+                <button type="submit" class="submit-btn">Log in</button>
+              </form>
+              <span class="separator login">Or</span>
+              <div class="sign-in-options">
+                <a href="#" class="fb-login">Log in with Facebook</a>
+                <a href="#" class="forgot-pass">Forgot password?</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- already have an account -->
+          <div class="account">
+            <p>Don't have an account? <a href="/register">Sign up</a></p>
+          </div>
+        </div>
+      </div>
+      <!-- footer -->
+      <footer>
+        <p>
+          <a href="#" class="links">Meta</a>
+          <a href="#" class="links">About</a>
+          <a href="#" class="links">Blog</a>
+          <a href="#" class="links">Jobs</a>
+          <a href="#" class="links">help</a>
+          <a href="#" class="links">API</a>
+          <a href="#" class="links">Privacy</a>
+          <a href="#" class="links">Terms</a>
+          <a href="#" class="links">Top Accounts</a>
+          <a href="#" class="links">Hashtags</a>
+          <a href="#" class="links">Locations</a>
+          <a href="#" class="links">Instagram lite</a>
+          <a href="#" class="links">Contact uploading & Non-Users</a>
+        </p>
+        <span>© 2022 Instagram from Meta</span>
+      </footer>
+    </main>
+  </body>
 </html>

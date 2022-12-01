@@ -1,0 +1,27 @@
+/* overide separator class in register */
+.login {
+    margin: 1rem 0!important;
+}
+
+.sign-in-options {
+  display: flex;
+  flex-direction: column;
+  justify-content: baseline;
+  align-items: center;
+}
+
+.sign-in-options .fb-login {
+  font-size: 14px;
+  text-decoration: none;
+  color: #385185;
+  font-weight: 600;
+}
+
+
+.sign-in-options .forgot-pass {
+    color: rgb(0, 55, 107);
+    font-size: 13px;
+    line-height: 16px;
+    margin-top: 12px!important;
+    text-decoration: none;
+}

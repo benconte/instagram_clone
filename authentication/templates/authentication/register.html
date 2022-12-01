@@ -1,12 +1,96 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    {% load crispy_forms_tags %}
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Register - Instragram</title>
-</head>
-<body>
-    <div>Register</div>
-</body>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lobster&family=Satisfy&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/static/css/style.css" />
+  </head>
+  <body>
+    <main>
+      <div class="content">
+        <div class="images-section">
+          <div class="image">
+            <img src="/static/screenshot1.png" alt="screenshot1" />
+          </div>
+        </div>
+        <div class="form-section">
+          <div class="form">
+            <div class="form-header">
+              <header>Instagram</header>
+              <legend>
+                Sign up to see photos and videos from your friends.
+              </legend>
+            </div>
+            <div class="form-content">
+              <button type="button" class="facebook">
+                Log in with Facebook
+              </button>
+              <span class="separator">Or</span>
+              <form method="POST" action="" class="form-group" autocomplete="off">
+                {% csrf_token %}
+                <!-- <input
+                  type="email"
+                  placeholder="Email, Mobile phone"
+                  required
+                  name="email"
+                />
+                <input type="text" placeholder="Full name" name="full_name" required />
+                <input type="text" placeholder="Username" name="username" require />
+                <input type="password" placeholder="password" name="password" required /> -->
+                {{ form|crispy }}
+                <div class="terms">
+                  <span>
+                    People who use our service may have uploaded your contact
+                    information to Instagram. <a href="#">Learn More</a>
+                  </span>
+
+                  <small
+                    >By signing up, you agree to our <a href="#">Terms</a>,
+                    <a href="#">Privacy Policy</a> and
+                    <a href="#">Cookies Policy</a>.</small
+                  >
+                </div>
+
+                <button type="submit" class="submit-btn">Sign up</button>
+              </form>
+              <br />
+            </div>
+          </div>
+
+          <!-- already have an account -->
+          <div class="account">
+            <p>Have an account? <a href="/login">Log in</a></p>
+          </div>
+        </div>
+      </div>
+      <!-- footer -->
+      <footer>
+        <p>
+          <a href="#" class="links">Meta</a>
+          <a href="#" class="links">About</a>
+          <a href="#" class="links">Blog</a>
+          <a href="#" class="links">Jobs</a>
+          <a href="#" class="links">help</a>
+          <a href="#" class="links">API</a>
+          <a href="#" class="links">Privacy</a>
+          <a href="#" class="links">Terms</a>
+          <a href="#" class="links">Top Accounts</a>
+          <a href="#" class="links">Hashtags</a>
+          <a href="#" class="links">Locations</a>
+          <a href="#" class="links">Instagram lite</a>
+          <a href="#" class="links">Contact uploading & Non-Users</a>
+        </p>
+        <span>© 2022 Instagram from Meta</span>
+      </footer>
+    </main>
+  </body>
 </html>
