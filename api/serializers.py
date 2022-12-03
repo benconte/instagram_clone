@@ -1,0 +1,24 @@
+from .models import (
+    Post, Story
+)
+from rest_framework import serializers
+
+class PostSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = Post
+        fields = "__all__"
+
+
+class StorySerializers(serializers.ModelSerializer):
+    class Meta:
+        model = Story
+        fields = "__all__"
+
+class PostCreateSerializer(serializers.ModelSerializer):
+    user = serializers.ReadOnlyField(source="user.username") # this is the user passed to the serializer save class in views
+    user_id = serializers.ReadOnlyField(source="user.id")
+    imageUrl = serializers.ImageField(required=False)
+
+    class Meta:
+        model = Post
+        fields = ['id', 'user', 'user_id', 'post', 'imageUrl', "is_comments_allowed"]

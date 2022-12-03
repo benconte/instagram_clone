@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useContext} from 'react'
 import HomeIcon from '@mui/icons-material/Home';
 import SearchIcon from '@mui/icons-material/Search';
 import ExploreIcon from '@mui/icons-material/Explore';
@@ -7,8 +7,10 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import AddIcon from '@mui/icons-material/Add';
 import MenuIcon from '@mui/icons-material/Menu';
 import InstagramIcon from '@mui/icons-material/Instagram';
+import { AppContext } from "../Base"
 
 function LeftNav() {
+    const { isPostFormActive, setIsPostFormActive } = useContext(AppContext)
     return (
         <div className='hidden xl:block xl:w-[245px] md:block md:w-[73px] overflow-hidden h-screen fixed top-o left-0 bg-transparent border-r border-solid border-gray-300 px-2 py-8'>
             <header className='font-sans text-xl p-2 flex items-center justify-center xl:justify-start'>
@@ -38,7 +40,7 @@ function LeftNav() {
                     <FavoriteBorderIcon className="text-2xl" />
                     <span className="hidden xl:block">Notifications</span>
                 </li>
-                <li className="navitem">
+                <li className="navitem" onClick={() => setIsPostFormActive(true)}>
                     <AddIcon className="text-2xl" />
                     <span className="hidden xl:block">Create</span>
                 </li>
