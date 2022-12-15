@@ -2,7 +2,6 @@ import axios from "axios";
 
 export async function create_PostEntry(data) {
     let form_data = new FormData();
-    console.log("file is:",data.imageUrl)
     if (data.imageUrl) {
         form_data.append("imageUrl", data.imageUrl, data.imageUrl.name);
     }
@@ -32,6 +31,19 @@ export async function create_PostEntry(data) {
         return err
     })
 
+    const user = await axios({
+        url: `api/user/${mymodel.data.user_id}`,
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+        },
+    }).then((res) => {
+        return res
+    }).catch((err) => {
+        return err
+    })
+
+    mymodel.data["user"] = user.data
     return mymodel;
 }
 

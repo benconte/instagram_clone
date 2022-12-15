@@ -1,6 +1,7 @@
 import React, {useEffect, createContext, useState} from 'react'
 import LeftNav from './Layout.,js/LeftNav'
 import TopNav from './Layout.,js/TopNav'
+import BottomNav from './Layout.,js/BottomNav'
 import Home from './pages/home/Home'
 import Create_post from "./post_form/Create_post"
 import Snackbar from '@mui/material/Snackbar';
@@ -13,10 +14,11 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 export const AppContext = createContext()
 
 function Base() {
-  const [isPostFormActive, setIsPostFormActive] = useState(true)
+  const [isPostFormActive, setIsPostFormActive] = useState(false)
   const [user, setUser] = useState()
   const [open, setOpen] = React.useState(false);
   const [snackBarMsg, setSnackBarMsg] = useState('')
+  const [postData, setPostData] = useState([])
 
   const handleClickSnackBar = () => {
     setOpen(true);
@@ -36,9 +38,12 @@ function Base() {
       setUser(user)
     })
 
-    // fetch("/api/posts")
-    // .then(res => res.json())
-    // .then(data => console.log(data))
+    fetch("/api/posts")
+    .then(res => res.json())
+    .then(data => {
+      console.log(data)
+      setPostData(data)
+    })
   }, [])
   return (
     <AppContext.Provider value={{
@@ -47,7 +52,9 @@ function Base() {
       user,
       setUser,
       handleClickSnackBar,
-      setSnackBarMsg
+      setSnackBarMsg,
+      postData,
+      setPostData,
     }}>
 
       <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
@@ -58,9 +65,10 @@ function Base() {
 
       <LeftNav />
       <TopNav />
+      <BottomNav />
+      {isPostFormActive && <Create_post />}
       <main className="md:ml-[73px] xl:ml-[245px] bg-[#FAFAFA] py-20 md:py-4 z-0">
         <Home />
-        {isPostFormActive && <Create_post />}
       </main>
     </AppContext.Provider>
   )

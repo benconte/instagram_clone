@@ -1,0 +1,17 @@
+----Basic instagram clone----------
+
+Create Post Page/home Page --done
+Add login/register apps --done
+Create admin Page --done
+Make app responsive --done
+Add fetching of posts --done
+Create post form --done
+Add new post to the top of all posts in home Page --done
+Add like and favorite functionality
+Add comments
+Create profile Page
+    --Show user posts
+    --Show favorites in profile Page
+Add update profile form functionality
+Create search page
+Add logout functionality --done

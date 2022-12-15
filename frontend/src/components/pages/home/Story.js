@@ -5,7 +5,6 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination, Navigation, HashNavigation } from "swiper";
 
 function Story() {
-  console.log(dummyData)
   return (
     <div className='w-full h-28 flex items-center bg-white rounded-[8px] pl-3 md:pl-5 border border-solid border-[#DBDBDB] overflow-x-hidden'>
       <Swiper

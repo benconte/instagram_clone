@@ -6,7 +6,6 @@ from django.utils import timezone
 
 class Media(models.Model):
     image = models.ImageField(upload_to="postImages", null=True)
-    video = models.FileField(upload_to="postVideos", null=True)
 
 class Comments(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, blank=False, null=True)
@@ -21,7 +20,6 @@ class Post(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, blank=False, null=False)
     post = models.CharField(max_length=1000)
     imageUrl = models.ImageField(upload_to="postImages", blank=True, null=True)
-    videoUrl = models.ImageField(upload_to="postVideo", blank=True, null=True)
     date_posted = models.DateTimeField(default=timezone.now)
     likes = models.ManyToManyField(User, blank=True, related_name="postLikes")
     favorite = models.ManyToManyField(User, blank=True, related_name="postFavorite")
@@ -30,6 +28,9 @@ class Post(models.Model):
 
     def __str__(self):
         return f"Post -> user({self.user.username}, {self.date_posted}, 'Comments': {self.is_comments_allowed})"
+    
+    def total_likes(self):
+        return self.likes.count()
 
 # videoUrl = models.ManyToManyField(Media, blank=False)
 
