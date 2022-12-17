@@ -1,13 +1,16 @@
 import React from 'react'
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import SearchIcon from '@mui/icons-material/Search';
+import { Link } from "react-router-dom"
 
 function TopNav() {
   return (
     <div className="z-10 md:hidden h-16 px-4 bg-white border-b border-solid border-gray-300 flex items-center justify-between fixed top-0 left-0 w-full">
-        <header className="font-sans text-xl cursor-pointer">
-            Instragram
-        </header>
+        <Link to={`/`} className="m-0 p-0 hover:no-underline hover:text-black">
+            <header className="font-sans text-xl cursor-pointer">
+                Instragram
+            </header>
+        </Link>
         <div className="flex items-center gap-4">
             <div className="flex items-center bg-[#EFEFEF] h-9 w-[275px] px-2 py-2 rounded gap-2">
                 <SearchIcon className="text-gray-500 text-base" />

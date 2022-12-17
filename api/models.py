@@ -31,6 +31,9 @@ class Post(models.Model):
     
     def total_likes(self):
         return self.likes.count()
+    
+    def total_comments(self):
+        return self.comments.count()
 
 # videoUrl = models.ManyToManyField(Media, blank=False)
 

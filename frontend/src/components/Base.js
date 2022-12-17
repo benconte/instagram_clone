@@ -3,9 +3,12 @@ import LeftNav from './Layout.,js/LeftNav'
 import TopNav from './Layout.,js/TopNav'
 import BottomNav from './Layout.,js/BottomNav'
 import Home from './pages/home/Home'
+import Profile from './pages/profile/Profile'
 import Create_post from "./post_form/Create_post"
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -41,7 +44,6 @@ function Base() {
     fetch("/api/posts")
     .then(res => res.json())
     .then(data => {
-      console.log(data)
       setPostData(data)
     })
   }, [])
@@ -62,14 +64,17 @@ function Base() {
           {snackBarMsg}
         </Alert>
       </Snackbar>
-
-      <LeftNav />
-      <TopNav />
-      <BottomNav />
-      {isPostFormActive && <Create_post />}
-      <main className="md:ml-[73px] xl:ml-[245px] bg-[#FAFAFA] py-20 md:py-4 z-0">
-        <Home />
-      </main>
+      <Router>
+        <LeftNav />
+        <BottomNav />
+        {isPostFormActive && <Create_post />}
+        <main className="md:ml-[73px] xl:ml-[245px] bg-[#FAFAFA] z-0">
+          <Routes>
+            <Route path={`/`} element={<Home />} />
+            {user && <Route path={`/:${user.username}`} element={<Profile />} />}
+          </Routes>
+        </main>
+      </Router>
     </AppContext.Provider>
   )
 }
