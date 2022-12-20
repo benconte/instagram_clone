@@ -1,11 +1,11 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, HttpResponse
 from rest_framework.views import APIView
 from rest_framework import generics, status, permissions, viewsets
 from .models import (
     Media, Post, Comments, Story
 )
-from .serializers import PostSerializers, StorySerializers, PostCreateSerializer
-from rest_framework.parsers import MultiPartParser, FormParser
+from .serializers import CommentCreateSerializer, PostSerializers, StorySerializers, PostCreateSerializer
+from rest_framework.parsers import JSONParser, MultiPartParser, FormParser
 from rest_framework.permissions import IsAdminUser
 from django.http import JsonResponse
 from rest_framework.response import Response
@@ -61,9 +61,8 @@ def posts(request):
         })
     return JsonResponse(postsData, status=status.HTTP_200_OK, safe=False)
 
+
 # get info about a specific user
-
-
 class UserSerializer(generics.ListAPIView):
     def get(self, request, id):
         queryset = get_object_or_404(User, id=id)
@@ -90,6 +89,30 @@ class PostCreateSerializer(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
+# create comment for post
+@login_required
+def createPostComment(request, pk):
+    if request.method == "POST":
+        post = Post.objects.filter(pk=request.POST['post_id']).first()
+        if post:
+            comment = Comments.objects.create(user=request.user, post=post, comment=request.POST['comment'])
+            comment.save()
+
+            comUser = json.dumps(str(request.user.profile.image))
+            comUserprofile = comUser.replace('"', "")
+            comm = Comments.objects.filter(user=request.user).last()
+            return JsonResponse({
+                "userId": request.user.id,
+                "com_id": comm.id,
+                "username": request.user.username,
+                "userProfile": "/media/"+comUserprofile,
+                "comment": comm.comment,
+                "is_comm_liked": False,
+                "date_commented": comm.date_posted.strftime("%b %d %Y"),
+                "total_comments_likes": 0,
+            }, status=200)
+
+        return HttpResponse(status=404)
 
 # get authenticated user
 @login_required
@@ -117,76 +140,96 @@ def getPostUser(request, id):  # get user who posted the post
 
 
 @login_required
-def getprofilePost(request):
-    userPosts = Post.objects.filter(user=request.user).all()
-    posts = []
-    for pst in userPosts:
-        postImg = json.dumps(str(pst.imageUrl))
-        image = postImg.replace('"', "")
+def getprofile(request, username):
+    user = User.objects.filter(username=username).first()
 
-        is_liked = False
-        is_favorite = False
+    if user:
+        profile = json.dumps(str(user.profile.image))
+        userProfile = profile.replace('"', "")
 
-        if pst.likes.filter(id=request.user.id):
-            is_liked = True
-        else:
+        userPosts = Post.objects.filter(user=user).all()
+        posts = []
+        for pst in userPosts:
+            postImg = json.dumps(str(pst.imageUrl))
+            image = postImg.replace('"', "")
+
             is_liked = False
-
-        if pst.favorite.filter(id=request.user.id):
-            is_favorite = True
-        else:
             is_favorite = False
 
-        posts.append({
-            'post_id': pst.id,
-            'post': pst.post,
-            'imageUrl': "/media/"+image,
-            "videoUrl": None,
-            "is_liked": is_liked,
-            "is_favorite": is_favorite,
-            "total_likes": pst.total_likes(),
-            "total_comments": pst.total_comments(),
-            "date_posted": pst.date_posted.strftime("%b %d %Y"),
-            "is_comments_allowed": pst.is_comments_allowed,
-        })
-    return JsonResponse(posts, status=status.HTTP_200_OK, safe=False)
+            if pst.likes.filter(id=request.user.id):
+                is_liked = True
+            else:
+                is_liked = False
+
+            if pst.favorite.filter(id=request.user.id):
+                is_favorite = True
+            else:
+                is_favorite = False
+
+            posts.append({
+                'post_id': pst.id,
+                'post': pst.post,
+                'imageUrl': "/media/"+image,
+                "videoUrl": None,
+                "is_liked": is_liked,
+                "is_favorite": is_favorite,
+                "total_likes": pst.total_likes(),
+                # "total_comments": pst.total_comments(),
+                "date_posted": pst.date_posted.strftime("%b %d %Y"),
+                "is_comments_allowed": pst.is_comments_allowed,
+            })
+        return JsonResponse({
+            "userId": user.id,
+            "username": user.username,
+            "profile": "/media/"+userProfile,
+            "fullname": user.get_full_name(),
+            "isUserPostSavedAllowed": True if request.user == user else False,
+            "posts": posts
+        }, status=status.HTTP_200_OK, safe=False)
+
+    return JsonResponse({"error": "User not found"}, status=status.HTTP_401_UNAUTHORIZED, safe=False)
+
 
 @login_required
-def getprofileSaved(request):
-    # get only post which user has favorite 
-    userPosts = Post.objects.filter(favorite = request.user).all()
+def getprofileSaved(request, username):
+    user = User.objects.filter(username=username).first()
+    # only get the saved posts if the authenticated user sent the request
+    if request.user == user:
+        userPosts = Post.objects.filter(favorite=request.user).all()# get only post which user has favorite
 
-    posts = []
-    for pst in userPosts:
-        postImg = json.dumps(str(pst.imageUrl))
-        image = postImg.replace('"', "")
+        posts = []
+        for pst in userPosts:
+            postImg = json.dumps(str(pst.imageUrl))
+            image = postImg.replace('"', "")
 
-        is_liked = False
-        is_favorite = False
-
-        if pst.likes.filter(id=request.user.id):
-            is_liked = True
-        else:
             is_liked = False
-
-        if pst.favorite.filter(id=request.user.id):
-            is_favorite = True
-        else:
             is_favorite = False
 
-        posts.append({
-            'post_id': pst.id,
-            'post': pst.post,
-            'imageUrl': "/media/"+image,
-            "videoUrl": None,
-            "is_liked": is_liked,
-            "is_favorite": is_favorite,
-            "total_likes": pst.total_likes(),
-            "total_comments": pst.total_comments(),
-            "date_posted": pst.date_posted.strftime("%b %d %Y"),
-            "is_comments_allowed": pst.is_comments_allowed,
-        })
-    return JsonResponse(posts, status=status.HTTP_200_OK, safe=False)
+            if pst.likes.filter(id=request.user.id):
+                is_liked = True
+            else:
+                is_liked = False
+
+            if pst.favorite.filter(id=request.user.id):
+                is_favorite = True
+            else:
+                is_favorite = False
+
+            posts.append({
+                'post_id': pst.id,
+                'post': pst.post,
+                'imageUrl': "/media/"+image,
+                "videoUrl": None,
+                "is_liked": is_liked,
+                "is_favorite": is_favorite,
+                "total_likes": pst.total_likes(),
+                "total_comments": pst.total_comments(),
+                "date_posted": pst.date_posted.strftime("%b %d %Y"),
+                "is_comments_allowed": pst.is_comments_allowed,
+            })
+        return JsonResponse(posts, status=status.HTTP_200_OK, safe=False)
+    return JsonResponse({"Error": "You are not allowed to perform this request"}, status=status.HTTP_401_UNAUTHORIZED, safe=False)
+
 
 @login_required
 def postLike(request, id):
@@ -223,4 +266,96 @@ def postFavorite(request, id):
         return JsonResponse({
             "isFavorite": True,
             "message": "Post saved",
+        }, status=status.HTTP_200_OK, safe=False)
+
+
+# get a post
+@login_required
+def getPost(request, id):
+    post = get_object_or_404(Post, id=id)
+
+    if post:
+        post_img = json.dumps(str(post.imageUrl))
+        imageUrl = post_img.replace('"', "")
+        post_user_profile = json.dumps(str(post.user.profile.image))
+        userProfile = post_user_profile.replace('"', "")
+
+        is_liked = False
+        is_favorite = False
+
+        if post.likes.filter(id=request.user.id):
+            is_liked = True
+        else:
+            is_liked = False
+
+        if post.favorite.filter(id=request.user.id):
+            is_favorite = True
+        else:
+            is_favorite = False
+        
+        comms = []
+        if post.is_comments_allowed:
+            comments = Comments.objects.filter(post=post).all()
+
+            for comm in comments:
+                comUser = json.dumps(str(comm.user.profile.image))
+                comUserprofile = comUser.replace('"', "")
+
+                is_comm_liked = False
+
+                if comm.likes.filter(id=request.user.id):
+                    is_comm_liked = True
+                else:
+                    is_comm_liked = False
+
+                comms.append({
+                    "userId": comm.user.id,
+                    "com_id": comm.id,
+                    "username": comm.user.username,
+                    "userProfile": "/media/"+comUserprofile,
+                    "comment": comm.comment,
+                    "is_comm_liked": is_comm_liked,
+                    "date_commented": comm.date_posted.strftime("%b %d %Y"),
+                    "total_comments_likes": comm.total_comments_likes(),
+                })
+
+        postsData = {
+            'post_id': post.id,
+            'post': post.post,
+            'imageUrl': "/media/"+imageUrl,
+            "videoUrl": None,
+            "is_liked": is_liked,
+            "is_favorite": is_favorite,
+            "total_likes": post.total_likes(),
+            "date_posted": post.date_posted.strftime("%b %d %Y"),
+            "is_comments_allowed": post.is_comments_allowed,
+            "comments": comms if post.is_comments_allowed else [],
+            "user": {
+                "id": post.user.id,
+                "username": post.user.username,
+                "profile": "/media/"+userProfile
+            },
+        }
+        return JsonResponse(postsData, status=status.HTTP_200_OK, safe=False)
+    
+    return JsonResponse({"Error": "Post not found"}, status=status.HTTP_401_UNAUTHORIZED, safe=False)
+
+
+@login_required
+def postCommentLike(request, id):
+    comm = get_object_or_404(Comments, id=id)
+
+    if comm.likes.filter(id=request.user.id).exists():
+        comm.likes.remove(request.user)
+        return JsonResponse({
+            "is_comm_liked": False,
+            "message": "Like removed",
+            "total_likes": comm.total_comments_likes(),
+        }, status=status.HTTP_200_OK, safe=False)
+    else:
+        comm.likes.add(request.user)
+        return JsonResponse({
+            "is_comm_liked": True,
+            "message": "Like Added",
+            "total_likes": comm.total_comments_likes(),
         }, status=status.HTTP_200_OK, safe=False)

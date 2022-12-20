@@ -9,7 +9,7 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import TelegramIcon from '@mui/icons-material/Telegram';
 import { AppContext } from "../../Base"
-
+import { Link } from 'react-router-dom';
 
 // header: #444444
 // icons: #262626
@@ -51,14 +51,14 @@ function Post({ post, index }) {
     return (
         <article className="w-full flex flex-col border border-solid border-[#DBDBDB] bg-white rounded-[8px] mb-2">
             <header className="px-2 flex items-center justify-between w-full h-14 ">
-                <div className="flex items-center gap-3">
+                <Link to={`/${post.user.username}`} className="m-o p-o hover:no-underline flex items-center gap-3">
                     <img src={post.user.profile} alt="/me.j" className="w-[40px] h-[40px] rounded-full" />
                     <span className="text-base font-medium text-[#444444]">{post.user.username}</span>
-                </div>
+                </Link>
 
                 <MoreHorizIcon className="text-xl cursor-pointer text-[#444444]" />
             </header>
-            <div className="w-full h-fit">
+            <div className="w-full h-fit bg-black">
                 <img src={post.imageUrl} alt="post" className="w-full max-h-[30rem] object-contain" />
             </div>
             {/* controls */}

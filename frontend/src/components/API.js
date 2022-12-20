@@ -47,3 +47,30 @@ export async function create_PostEntry(data) {
     return mymodel;
 }
 
+// create post comment
+export async function create_PostCommentEntry(data) {
+    let formData = new FormData()
+
+    formData.append("post_id", data.post_id)
+    formData.append("comment", data.comment)
+
+    axios.defaults.xsrfHeaderName = "X-CSRFTOKEN";
+    axios.defaults.xsrfCookieName = "csrftoken";
+    axios.defaults.withCredentials = true;
+
+    const comment = await axios({
+        url: `/api/createPostComment/${data.post_id}`,
+        method: "POST",
+        headers: {
+            "Content-Type": "multipart/form-data",
+        },
+        data: formData,
+    }).then((res) => {
+        return res
+    }).catch((err) => {
+        return err
+    })
+
+    return comment;
+}
+

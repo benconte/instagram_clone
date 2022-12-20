@@ -23,7 +23,7 @@ function LeftNav() {
                 </Link>
             </header>
             <ul className='m-0 w-full list-none'>
-                <Link to={`/`}>
+                <Link to={`/`} className="m-0 p-0 hover:no-underline">
                     <li className="navitem">
                         <HomeIcon className="text-2xl" />
                         <span className="hidden xl:block">Home</span>

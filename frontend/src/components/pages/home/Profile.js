@@ -1,5 +1,6 @@
 import React, {useContext} from 'react'
 import { AppContext } from "../../Base"
+import { Link } from "react-router-dom"
 
 function Profile() {
   const { user } = useContext(AppContext)
@@ -10,7 +11,9 @@ function Profile() {
             <p className="text-sm font-medium m-0 p-0 text-lightDark cursor-pointer">{user.username}</p>
             <span className="font-semi-bold text-sm text-lightGrey capitalize">{user.fullname}</span>
         </div>
-        <p className="text-igBlue m-0 text-base font-medium cursor-pointer">Switch</p>
+        <a href='logout/' className="m-0 p-0 no-underline text-igBlue">
+          <p className="m-0 text-base font-medium cursor-pointer">Switch</p>
+        </a>
     </div>
   )
 }

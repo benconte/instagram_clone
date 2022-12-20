@@ -6,7 +6,7 @@ import Suggestion from "./Suggestion"
 import Footer from "./Footer"
 import { dummyData } from "../../../dummy"
 import { AppContext } from "../../Base"
-import TopNav from '../../Layout.,js/TopNav'
+import TopNav from '../../Layout/TopNav'
 // py-20 md:py-4
 function Home() {
   const { postData, user } = useContext(AppContext)
