@@ -10,13 +10,15 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import TelegramIcon from '@mui/icons-material/Telegram';
 import { AppContext } from "../../Base"
 import { Link } from 'react-router-dom';
+import { create_PostCommentEntry } from "../../API"
 
 // header: #444444
 // icons: #262626
 // comments name: #404040
-function Post({ post, index }) {
-    const [comment, setComment] = useState()
+function Post({ post, index, setPost }) {
+    const [comment, setComment] = useState("")
     const { postData, setPostData } = useContext(AppContext)
+    const [isLoading, setIsLoading] = useState(false);
 
     const handlecomment = (e) => {
         setComment(e.target.value)
@@ -48,6 +50,29 @@ function Post({ post, index }) {
             })
         })
     }
+
+    const handlePost = async () => {
+        setIsLoading(true);
+
+        const dta = {
+          "post_id": post.post_id,
+          "comment": comment
+        }
+        const response = await create_PostCommentEntry(dta)
+        if (response.status === 400) {
+            setError(response.data)
+            console.log(error)
+        } else {
+            setIsLoading(false)
+            setComment("")
+            
+            setPost((prevState) => {
+                const newState = [...prevState];
+                newState[index].total_comments += 1;
+                return newState;
+            })
+        }
+    }
     return (
         <article className="w-full flex flex-col border border-solid border-[#DBDBDB] bg-white rounded-[8px] mb-2">
             <header className="px-2 flex items-center justify-between w-full h-14 ">
@@ -69,7 +94,9 @@ function Post({ post, index }) {
                         :
                         <FavoriteBorderIcon className="text-xl cursor-pointer text-[#262626] hover:text-[#8E8E8E]" onClick={() => handleLikes(post.post_id)} />
                     }
-                    <ChatIcon className="text-lg cursor-pointer text-[#262626] hover:text-[#8E8E8E]" />
+                    <Link to={`/p/${post.post_id}`} className="m-0 p-0 hover:no-underline">
+                        <ChatIcon className="text-lg cursor-pointer text-[#262626] hover:text-[#8E8E8E]" />
+                    </Link>
                     <TelegramIcon className="text-xl cursor-pointer text-[#262626] hover:text-[#8E8E8E]" />
                 </div>
                 {post.is_favorite?
@@ -86,16 +113,38 @@ function Post({ post, index }) {
                     <span className="font-medium mr-2">{post.user.username}</span>
                     {post.post}
                 </p>
-                <p className="text-[#8E8E8E] text-sm my-2 cursor-pointer">2,135 comments</p>
-                <p className="text-[#8E8E8E] text-sm my-2">1 Day Ago</p>
+                <Link to={`/p/${post.post_id}`} className="m-0 p-0 hover:no-underline">
+                    <p className="text-[#8E8E8E] text-sm my-2 cursor-pointer">
+                        {post.is_comments_allowed? post.total_comments + " comments" : "No comments"}
+                    </p>
+                </Link>
+                <p className="text-[#8E8E8E] text-sm my-2">{post.date_posted}</p>
             </div>
-            <div className="w-full h-12 flex items-center gap-2 border-t border-solid border-[#DBDBDB] px-2">
-                <SentimentSatisfiedAltIcon className="text-2xl text-[#262626] cursor-pointer" />
-                <input type="text" className="border-0 bg-transparent text-[#262626] basis-full text-sm outline-0" placeholder="Add a comment..." onChange={(e) => handlepost(e)} />
-                <button type="button" disabled={!comment && true} className={`focus:outline-0  text-[${comment ? "#0F9BF7" : "#C5E7FD"}] text-base font-medium cursor-${comment ? "pointer" : "default"}`}>Post</button>
-            </div>
+            {post.is_comments_allowed?
+                <div className="w-full h-12 flex items-center gap-2 border-t border-solid border-[#DBDBDB] px-2">
+                    <SentimentSatisfiedAltIcon className="text-2xl text-[#262626] cursor-pointer" />
+                    <input type="text" className="border-0 bg-transparent text-[#262626] basis-full text-sm outline-0" value={comment} placeholder="Add a comment..." onChange={(e) => handlecomment(e)} />
+                    {isLoading? 
+                        <div className="w-5 h-5 mx-auto border-2 border-solid border-[#0F9BF7] border-r-transparent rounded-full animate-spin"></div>
+                    : 
+                        <button 
+                        type="button" 
+                        disabled={!comment.length > 0 && "on"} 
+                        className={`focus:outline-0 ${comment.length > 0 ? "text-[#0F9BF7]" : "text-[#C5E7FD]"} text-base font-medium cursor-${comment.length > 0 ? "pointer" : "default"}`}
+                        onClick={() => handlePost()}
+                        >Post</button>
+                    }
+                    
+                </div>
+            :
+                <div className="w-full h-12 flex items-center gap-2 border-t border-solid border-[#DBDBDB] px-2">
+                    <h3 className="text-sm text-gray-400">Comments turned off</h3>
+                </div>
+            }
         </article>
     )
 }
 
 export default Post
+
+// "#0F9BF7" : "#C5E7FD"

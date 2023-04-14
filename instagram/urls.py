@@ -26,6 +26,7 @@ urlpatterns = [
     path('api/', include('api.urls')),
     path('', include('frontend.urls')),
     path('register/', authenticate_views.register, name="register"),
+    path("user/profile/", authenticate_views.profile, name="user_profile"),
     path('login/', auth_views.LoginView.as_view(template_name='authentication/login.html', redirect_authenticated_user=True), name='login'),
     path('logout/', auth_views.LogoutView.as_view(template_name='authentication/logout.html'), name='logout'),
 ]

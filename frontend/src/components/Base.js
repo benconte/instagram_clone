@@ -68,7 +68,7 @@ function Base() {
         <LeftNav />
         <BottomNav />
         {isPostFormActive && <Create_post />}
-        <main className="md:ml-[73px] xl:ml-[245px] bg-[#FAFAFA] z-0 mb-16 md:mb-0">
+        <main className="md:ml-[73px] xl:ml-[245px] min-h-screen bg-[#FAFAFA] z-0 mb-16 md:mb-0">
           <Routes>
             <Route path={`/`} element={<Home />} />
             {<Route path={`/:username`} element={<Profile />} />}

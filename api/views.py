@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404, HttpResponse
+from django.shortcuts import render, get_object_or_404, HttpResponse, redirect
 from rest_framework.views import APIView
 from rest_framework import generics, status, permissions, viewsets
 from .models import (
@@ -19,6 +19,24 @@ class Post_Serializers(generics.ListAPIView):
     queryset = Post.objects.all()
     serializer_class = PostSerializers
 
+def getSuggestionUsers(request):
+    users = User.objects.all()[:5]
+
+    usrs = []
+    for user in users:
+        user_img = json.dumps(str(user.profile.image))
+        imageUrl = user_img.replace('"', "")
+
+        # checking if the authenticated user has followed this suggested user
+        isFollowed = user.profile.followers.filter(id=request.user.id).exists()
+
+        usrs.append({
+            "user_id": user.id,
+            "username": user.username,
+            "profile": "/media/" + imageUrl,
+            "isFollowed": isFollowed,
+        })
+    return JsonResponse(usrs, status=status.HTTP_200_OK, safe=False)
 
 @login_required
 def posts(request):
@@ -43,6 +61,10 @@ def posts(request):
         else:
             is_favorite = False
 
+        comments_length = 0
+        if post.is_comments_allowed:
+            comments_length = Comments.objects.filter(post=post).all().count()
+
         postsData.append({
             'post_id': post.id,
             'post': post.post,
@@ -53,6 +75,7 @@ def posts(request):
             "total_likes": post.total_likes(),
             "date_posted": post.date_posted.strftime("%b %d %Y"),
             "is_comments_allowed": post.is_comments_allowed,
+            "total_comments": comments_length,
             "user": {
                 "id": post.user.id,
                 "username": post.user.username,
@@ -166,6 +189,10 @@ def getprofile(request, username):
             else:
                 is_favorite = False
 
+            comments_length = 0
+            if pst.is_comments_allowed:
+                comments_length = Comments.objects.filter(post=pst).all().count()
+
             posts.append({
                 'post_id': pst.id,
                 'post': pst.post,
@@ -174,16 +201,21 @@ def getprofile(request, username):
                 "is_liked": is_liked,
                 "is_favorite": is_favorite,
                 "total_likes": pst.total_likes(),
-                # "total_comments": pst.total_comments(),
+                "total_comments": comments_length,
                 "date_posted": pst.date_posted.strftime("%b %d %Y"),
                 "is_comments_allowed": pst.is_comments_allowed,
             })
         return JsonResponse({
             "userId": user.id,
             "username": user.username,
+            "email": user.email,
+            "firstName": user.first_name,
+            "lastName": user.last_name,
             "profile": "/media/"+userProfile,
             "fullname": user.get_full_name(),
             "isUserPostSavedAllowed": True if request.user == user else False,
+            "total_followers": user.profile.total_followers(),
+            "total_following": user.profile.total_following(),
             "posts": posts
         }, status=status.HTTP_200_OK, safe=False)
 
@@ -191,8 +223,8 @@ def getprofile(request, username):
 
 
 @login_required
-def getprofileSaved(request, username):
-    user = User.objects.filter(username=username).first()
+def getprofileSaved(request):
+    user = User.objects.filter(username=request.user.username).first()
     # only get the saved posts if the authenticated user sent the request
     if request.user == user:
         userPosts = Post.objects.filter(favorite=request.user).all()# get only post which user has favorite
@@ -215,6 +247,10 @@ def getprofileSaved(request, username):
             else:
                 is_favorite = False
 
+            comments_length = 0
+            if pst.is_comments_allowed:
+                comments_length = Comments.objects.filter(post=pst).all().count()
+
             posts.append({
                 'post_id': pst.id,
                 'post': pst.post,
@@ -223,12 +259,43 @@ def getprofileSaved(request, username):
                 "is_liked": is_liked,
                 "is_favorite": is_favorite,
                 "total_likes": pst.total_likes(),
-                "total_comments": pst.total_comments(),
+                "total_comments": comments_length,
                 "date_posted": pst.date_posted.strftime("%b %d %Y"),
                 "is_comments_allowed": pst.is_comments_allowed,
             })
         return JsonResponse(posts, status=status.HTTP_200_OK, safe=False)
     return JsonResponse({"Error": "You are not allowed to perform this request"}, status=status.HTTP_401_UNAUTHORIZED, safe=False)
+
+
+# handling following and unfollowing
+@login_required
+def userFollowing(request, id):
+    # following a user
+    user = User.objects.get(id=id)
+
+    if request.user.profile.following.filter(id=id).exists():
+        # if user already follows the passed in user, then unfollow
+
+        request.user.profile.following.remove(user)
+        user.profile.followers.remove(request.user)
+
+        return JsonResponse({
+            "isFollowing": False,
+            "message": "User unfollowed",
+            "total_following": request.user.profile.total_following(),
+        }, status=status.HTTP_200_OK, safe=False)
+
+    else:
+        # else add a follow
+        
+        request.user.profile.following.add(user)
+        user.profile.followers.add(request.user)
+
+        return JsonResponse({
+            "isFollowing": True,
+            "message": "User followed",
+            "total_following": request.user.profile.total_following(),
+        }, status=status.HTTP_200_OK, safe=False)
 
 
 @login_required
@@ -359,3 +426,12 @@ def postCommentLike(request, id):
             "message": "Like Added",
             "total_likes": comm.total_comments_likes(),
         }, status=status.HTTP_200_OK, safe=False)
+
+
+@login_required
+def updateAccount(request):
+    if request.method == "POST":
+        print(request.POST)
+        return redirect("/"+request.user.username)
+    
+    return redirect("/"+request.user.username)

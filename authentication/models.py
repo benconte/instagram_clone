@@ -6,6 +6,15 @@ from PIL import Image
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
     image = models.ImageField(default="profile.png", upload_to="profilePics")
+    followers = models.ManyToManyField(User, blank=True, related_name="followers")
+    following = models.ManyToManyField(User, blank=True, related_name="following")
+    bio = models.TextField(null=True)
+
+    def total_followers(self):
+        return self.followers.count()
+
+    def total_following(self):
+        return self.following.count()
 
     def __str__(self):
         return f"Profile -> User({self.user.username})"

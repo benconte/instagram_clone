@@ -33,7 +33,7 @@ function LeftNav() {
                     <SearchIcon className="text-2xl" />
                     <span className="hidden xl:block">Search</span>
                 </li>
-                <li className="navitem">
+                {/* <li className="navitem">
                     <ExploreIcon className="text-2xl" />
                     <span className="hidden xl:block">Explore</span>
                 </li>
@@ -44,7 +44,7 @@ function LeftNav() {
                 <li className="navitem">
                     <FavoriteBorderIcon className="text-2xl" />
                     <span className="hidden xl:block">Notifications</span>
-                </li>
+                </li> */}
                 <li className="navitem" onClick={() => setIsPostFormActive(true)}>
                     <AddIcon className="text-2xl" />
                     <span className="hidden xl:block">Create</span>

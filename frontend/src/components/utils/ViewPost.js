@@ -198,15 +198,21 @@ function ViewPost() {
                     <p className="text-[#262626] font-base pb-1">{post.total_likes > 0 ? post.total_likes + " likes" : "2,702,556 likes"}</p>
                     <p className="text-[#8E8E8E] text-sm my-2">1 Day Ago</p>
                   </div>
-                  <form className="w-full h-12 flex items-center gap-2 border-t border-solid border-[#DBDBDB] px-4">
-                    <CSRFToken />
-                    <SentimentSatisfiedAltIcon className="text-2xl text-[#262626] cursor-pointer" />
+                  {post.is_comments_allowed ?
+                    <form className="w-full h-12 flex items-center gap-2 border-t border-solid border-[#DBDBDB] px-4">
+                      <CSRFToken />
+                      <SentimentSatisfiedAltIcon className="text-2xl text-[#262626] cursor-pointer" />
 
-                    <input type="text" className="border-0 bg-transparent text-[#262626] basis-full text-sm outline-0" placeholder="Add a comment..." value={comment} onChange={(e) => handlePost(e)} />
+                      <input type="text" className="border-0 bg-transparent text-[#262626] basis-full text-sm outline-0" placeholder="Add a comment..." value={comment} onChange={(e) => handlePost(e)} />
 
-                    <button type="submit" disabled={comment == "" && true} className={`focus:outline-0  text-[${comment ? "#0F9BF7" : "#C5E7FD"}] text-base font-medium cursor-${comment ? "pointer" : "default"}`}
-                    onClick={(e) => doSubmit(e)} >Post</button>
-                  </form>
+                      <button type="submit" disabled={comment == "" && true} className={`focus:outline-0  text-[${comment ? "#0F9BF7" : "#C5E7FD"}] text-base font-medium cursor-${comment ? "pointer" : "default"}`}
+                      onClick={(e) => doSubmit(e)} >Post</button>
+                    </form>
+                    :
+                      <div className="w-full h-12 flex items-center border-t border-solid border-[#DBDBDB] px-4">
+                        <h3 className="text-sm text-gray-400">Comments turned off</h3>
+                      </div>
+                    }
                 </div>
               </div>
             </div>
