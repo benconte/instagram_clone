@@ -435,3 +435,22 @@ def updateAccount(request):
         return redirect("/"+request.user.username)
     
     return redirect("/"+request.user.username)
+
+
+# searching for a suer
+def search(request, username):
+    match = User.objects.filter(username__icontains=username)
+
+    users = []
+    for usr in match:
+        user_profile = json.dumps(str(usr.profile.image))
+        profile = user_profile.replace('"', "")
+
+        users.append({
+            "id": usr.id,
+            "username": usr.username,
+            "profile": "/media/" + profile
+        })
+
+    return JsonResponse(users, status=status.HTTP_200_OK, safe=False)
+

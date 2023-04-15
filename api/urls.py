@@ -2,7 +2,7 @@ from django.urls import path, include
 from .views import (
     Post_Serializers, PostCreateSerializer, auth_status, UserSerializer, posts, getprofile, postLike, 
     postFavorite, getprofileSaved, getPost, createPostComment, postCommentLike, getSuggestionUsers,
-    userFollowing, updateAccount
+    userFollowing, updateAccount, search
 )
 from rest_framework import routers
 
@@ -18,6 +18,7 @@ urlpatterns = [
     path("", include(router.urls)),
     path("user/auth", auth_status),
     path("user/getprofile/<str:username>", getprofile),
+    path("users/search/<str:username>", search),
     path("user/getprofileSaved", getprofileSaved),
     path("post/like/<int:id>", postLike),
     path("post/favorite/<int:id>", postFavorite),
