@@ -109,7 +109,7 @@ export default function UpdateProfile({ open, handleClose, user }) {
               {error}
             </div>
           )}
-          <form className="w-full" action="/user/profile/" method="POST" enctype="multipart/form-data">
+          <form className="w-full" action="/user/profile/" method="POST" encType="multipart/form-data">
             <input type="hidden" name="csrfmiddlewaretoken" value={csrftoken} />
 
             <input
@@ -124,13 +124,13 @@ export default function UpdateProfile({ open, handleClose, user }) {
                 Profile Picture
               </span>
               <div className="w-full h-20 flex items-center gap-3 mt-2 border-2 border-dashed border-gray-300 p-3 rounded-lg">
-                <div className="w-28 h-full">
+                <div className="w-28 h-16">
                   {image !== null ? (
                     <div className="w-full h-full relative">
                       <img
                         src={image}
                         alt="profile"
-                        className="object-cover rounded"
+                        className="h-full object-cover rounded"
                         fill={true}
                       />
                       <div

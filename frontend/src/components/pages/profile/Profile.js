@@ -9,6 +9,9 @@ import ChatBubbleIcon from "@mui/icons-material/ChatBubble";
 import { useParams } from "react-router-dom";
 import UpdateProfile from "./UpdateProfile";
 import { csrftoken } from "../../Cookie";
+import Lottie from "react-lottie-player";
+
+const animation = require("/static/images/lottiefiles/contact-us-lottie.json");
 
 function Profile() {
   const { user } = useContext(AppContext);
@@ -27,7 +30,6 @@ function Profile() {
     fetch(`/api/user/getprofile/${username}`)
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
         setProfile(data);
         setIsUserSavedPostAllowed(data.isUserPostSavedAllowed);
       });
@@ -44,9 +46,6 @@ function Profile() {
   const CSRFToken = () => {
     return <input type="hidden" name="csrfmiddlewaretoken" value={csrftoken} />;
   };
-
-  console.log(user)
-  console.log(profile)
   return (
     <>
       {profile && (
@@ -134,76 +133,110 @@ function Profile() {
                 </p>
               )}
             </div>
-            <div className="grid grid-flow-row-dense md:grid-cols-2 lg:grid-cols-3 place-items-center">
+            <div>
               {tabIndex === 0 ? (
                 <>
-                  {profile.posts &&
-                    profile.posts.map((post, index) => (
-                      <Link
-                        to={`/p/${post.post_id}`}
-                        className="w-full m-0 p-0 hover:no-underline"
-                      >
-                        <div
-                          className="relative cursor-pointer group w-full md:w-[293px] h-[293px] mb-3"
-                          key={index}
+                  {profile.posts && profile.posts.length > 0 ? (
+                    <div className="w-full grid grid-flow-row-dense md:grid-cols-2 lg:grid-cols-3 place-items-center">
+                      {profile.posts.map((post, index) => (
+                        <Link
+                          to={`/p/${post.post_id}`}
+                          className="w-full m-0 p-0 hover:no-underline"
                         >
-                          <img
-                            src={post.imageUrl}
-                            alt=""
-                            className="w-full h-full object-cover"
-                          />
-                          <div className="absolute hidden group-hover:flex top-0 left-0 w-full h-full  items-center justify-center gap-3 bg-[rgba(0,0,0,.6)]">
-                            <div className="text-white flex items-center gap-2">
-                              <FavoriteIcon style={{ fontSize: "20px" }} />
-                              <span className="text-sm">
-                                {post.total_likes}
-                              </span>
-                            </div>
-                            <div className="text-white flex items-center gap-2">
-                              <ChatBubbleIcon style={{ fontSize: "20px" }} />
-                              <span className="text-sm">
-                                {post.total_comments}
-                              </span>
+                          <div
+                            className="relative cursor-pointer group w-full md:w-[293px] h-[293px] mb-3"
+                            key={index}
+                          >
+                            <img
+                              src={post.imageUrl}
+                              alt=""
+                              className="w-full h-full object-cover"
+                            />
+                            <div className="absolute hidden group-hover:flex top-0 left-0 w-full h-full  items-center justify-center gap-3 bg-[rgba(0,0,0,.6)]">
+                              <div className="text-white flex items-center gap-2">
+                                <FavoriteIcon style={{ fontSize: "20px" }} />
+                                <span className="text-sm">
+                                  {post.total_likes}
+                                </span>
+                              </div>
+                              <div className="text-white flex items-center gap-2">
+                                <ChatBubbleIcon style={{ fontSize: "20px" }} />
+                                <span className="text-sm">
+                                  {post.total_comments}
+                                </span>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </Link>
-                    ))}
+                        </Link>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="w-full flex items-center justify-center mt-10">
+                      <div className="w-full flex flex-col justify-center items-center gap-3">
+                        <h3 className="text-lg text-igBlue font-medium">
+                          You don't have any posts
+                        </h3>
+                        <Lottie
+                          loop
+                          animationData={animation}
+                          play
+                          className="w-2/6 h-2/6"
+                        />
+                      </div>
+                    </div>
+                  )}
                 </>
               ) : (
                 <>
-                  {saved &&
-                    saved.map((post, index) => (
-                      <Link
-                        to={`/p/${post.post_id}`}
-                        className="w-full m-0 p-0 hover:no-underline"
-                      >
-                        <div
-                          className="relative cursor-pointer group w-full md:w-[293px] h-[293px] mb-3"
-                          key={index}
+                  {saved && saved.length > 0 ? (
+                    <div className="w-full grid grid-flow-row-dense md:grid-cols-2 lg:grid-cols-3 place-items-center">
+                      {saved.map((post, index) => (
+                        <Link
+                          to={`/p/${post.post_id}`}
+                          className="w-full m-0 p-0 hover:no-underline"
                         >
-                          <img
-                            src={post.imageUrl}
-                            alt=""
-                            className="w-full h-full object-cover"
-                          />
-                          <div className="absolute hidden group-hover:flex top-0 left-0 w-full h-full  items-center justify-center gap-3 bg-[rgba(0,0,0,.6)]">
-                            <div className="text-white flex items-center gap-2">
-                              <FavoriteIcon style={{ fontSize: "20px" }} />
-                              <span className="text-sm">
-                                {post.total_likes}
-                              </span>
-                            </div>
-                            <div className="text-white flex items-center gap-2">
-                              <ChatBubbleIcon style={{ fontSize: "20px" }} />
-                              <span className="text-sm">
-                                {post.total_comments}
-                              </span>
+                          <div
+                            className="relative cursor-pointer group w-full md:w-[293px] h-[293px] mb-3"
+                            key={index}
+                          >
+                            <img
+                              src={post.imageUrl}
+                              alt=""
+                              className="w-full h-full object-cover"
+                            />
+                            <div className="absolute hidden group-hover:flex top-0 left-0 w-full h-full  items-center justify-center gap-3 bg-[rgba(0,0,0,.6)]">
+                              <div className="text-white flex items-center gap-2">
+                                <FavoriteIcon style={{ fontSize: "20px" }} />
+                                <span className="text-sm">
+                                  {post.total_likes}
+                                </span>
+                              </div>
+                              <div className="text-white flex items-center gap-2">
+                                <ChatBubbleIcon style={{ fontSize: "20px" }} />
+                                <span className="text-sm">
+                                  {post.total_comments}
+                                </span>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </Link>
-                    ))}
+                        </Link>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="w-full flex items-center justify-center mt-10">
+                      <div className="w-full flex flex-col justify-center items-center gap-3">
+                        <h3 className="text-lg text-igBlue font-medium">
+                          You don't have any saved posts
+                        </h3>
+                        <Lottie
+                          loop
+                          animationData={animation}
+                          play
+                          className="w-2/6 h-2/6"
+                        />
+                      </div>
+                    </div>
+                  )}
                 </>
               )}
             </div>

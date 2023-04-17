@@ -28,6 +28,7 @@ function Base() {
   const [open, setOpen] = React.useState(false);
   const [snackBarMsg, setSnackBarMsg] = useState("");
   const [postData, setPostData] = useState([]);
+  const [snackBarSeverity, setSnackBarSeverity] = useState("success"); // default to success which is the green one
 
   const handleClickSnackBar = () => {
     setOpen(true);
@@ -65,10 +66,12 @@ function Base() {
         setSnackBarMsg,
         postData,
         setPostData,
+        snackBarSeverity,
+        setSnackBarSeverity,
       }}
     >
       <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-        <Alert onClose={handleClose} severity="success" sx={{ width: "100%" }}>
+        <Alert onClose={handleClose} severity={snackBarSeverity} sx={{ width: "100%" }}>
           {snackBarMsg}
         </Alert>
       </Snackbar>

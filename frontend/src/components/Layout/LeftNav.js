@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import HomeIcon from "@mui/icons-material/Home";
 import SearchIcon from "@mui/icons-material/Search";
 import ExploreIcon from "@mui/icons-material/Explore";
@@ -9,10 +9,17 @@ import MenuIcon from "@mui/icons-material/Menu";
 import InstagramIcon from "@mui/icons-material/Instagram";
 import { AppContext } from "../Base";
 import { Link } from "react-router-dom";
+import ClickAwayListener from "@mui/base/ClickAwayListener";
 
 function LeftNav() {
   const { user, isPostFormActive, setIsPostFormActive } =
     useContext(AppContext);
+  const [showLogout, setShowLogout] = useState(false);
+
+  const handleClickAway = () => {
+    setShowLogout(false);
+  };
+
   return (
     <div className="hidden xl:block xl:w-[245px] md:block md:w-[73px] overflow-hidden h-screen fixed top-o left-0 bg-transparent border-r border-solid border-gray-300 px-2 py-8">
       <header className="font-sans text-xl p-2 flex items-center justify-center xl:justify-start">
@@ -68,17 +75,23 @@ function LeftNav() {
       </ul>
 
       <div className="absolute bottom-0 left-2 right-2 p-[12px] rounded-full my-2 text-[rgba(38,38,38,.8)] cursor-pointer hover:bg-[rgb(250,250,250)]">
-        <div className="relative group flex items-center gap-4">
-          <MenuIcon />
-          <span className="hidden xl:block">More</span>
+        <ClickAwayListener onClickAway={handleClickAway}>
+          <div className="relative">
+            <div className="flex items-center gap-4" onClick={() => setShowLogout(!showLogout)}>
+              <MenuIcon />
+              <span className="hidden xl:block">More</span>
+            </div>
 
-          <a
-            href="logout/"
-            className="absolute hidden group-hover:flex -top-12 bg-igBlue w-full left-0 p-[12px] rounded hover:no-underline"
-          >
-            <h4 className="text-base text-white">Logout</h4>
-          </a>
-        </div>
+            {showLogout && (
+              <a
+                href="logout/"
+                className="absolute -top-16 bg-igBlue w-full left-0 p-[12px] rounded hover:no-underline"
+              >
+                <h4 className="text-base text-white">Logout</h4>
+              </a>
+            )}
+          </div>
+        </ClickAwayListener>
       </div>
     </div>
   );

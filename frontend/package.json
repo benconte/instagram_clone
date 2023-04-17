@@ -28,6 +28,7 @@
     "@babel/plugin-proposal-class-properties": "^7.18.6",
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
+    "@mui/base": "^5.0.0-alpha.125",
     "@mui/icons-material": "^5.10.15",
     "@mui/material": "^5.10.15",
     "@tailwindcss/line-clamp": "^0.4.2",

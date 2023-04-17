@@ -12,7 +12,7 @@ from rest_framework.response import Response
 from django.contrib.auth.decorators import login_required
 import json
 from django.contrib.auth.models import User
-
+import random
 
 # Create your views here.
 class Post_Serializers(generics.ListAPIView):
@@ -20,10 +20,18 @@ class Post_Serializers(generics.ListAPIView):
     serializer_class = PostSerializers
 
 def getSuggestionUsers(request):
-    users = User.objects.all()[:5]
+    # we need to exclude the current user to avoid suggesting ourselves
+    current_user = request.user
+    users_to_exclude = [current_user.id, User.objects.get(id=13).id] # users to exclude
+    all_users = User.objects.all().exclude(id__in=users_to_exclude) # if the id is in the exclude array
+
+    # randomly selecting users for suggestion.
+    # we use random.sample because it is generally fast for small data sets
+    random_users = random.sample(list(all_users), min(5, len(all_users)))
+    random_user = [user for user in random_users]
 
     usrs = []
-    for user in users:
+    for user in random_user:
         user_img = json.dumps(str(user.profile.image))
         imageUrl = user_img.replace('"', "")
 
@@ -453,4 +461,17 @@ def search(request, username):
         })
 
     return JsonResponse(users, status=status.HTTP_200_OK, safe=False)
+
+
+# deleting a post
+def deletePost(request, id):
+    try:
+        post = Post.objects.get(id=id)
+        post.delete()
+
+        return JsonResponse({"message": "Post deleted successfully", "success": True}, status=status.HTTP_200_OK, safe=False)
+    except:
+        print("[EXCEPTION] : something went wrong when deleting post. (Post not found)")
+        return JsonResponse({"message": "Unable to delete post. Try again later", "success": False}, status=status.HTTP_400_BAD_REQUEST, safe=False)
+
 

@@ -2,7 +2,7 @@ from django.urls import path, include
 from .views import (
     Post_Serializers, PostCreateSerializer, auth_status, UserSerializer, posts, getprofile, postLike, 
     postFavorite, getprofileSaved, getPost, createPostComment, postCommentLike, getSuggestionUsers,
-    userFollowing, updateAccount, search
+    userFollowing, updateAccount, search, deletePost
 )
 from rest_framework import routers
 
@@ -23,6 +23,7 @@ urlpatterns = [
     path("post/like/<int:id>", postLike),
     path("post/favorite/<int:id>", postFavorite),
     path("getPost/<int:id>", getPost),
+    path("deletePost/<int:id>", deletePost),
     path("post/comment/like/<int:id>", postCommentLike),
     path("getSuggestionUsers", getSuggestionUsers),
     path("userFollowing/<int:id>", userFollowing),
